@@ -4,27 +4,32 @@
       <div class="card">
         <div class="card-body">
           <div v-if="!loading">
-            <h2>{{bookable.title}}</h2>
+            <h2>{{ bookable.title }}</h2>
             <hr />
-            <article>{{bookable.description}}</article>
+            <article>{{ bookable.description }}</article>
           </div>
           <div v-else>Loading...</div>
         </div>
       </div>
+
+      <review-list :bookable-id="this.$route.params.id"></review-list>
     </div>
     <div class="col-md-4 pb-4">
-      <availability></availability>
+      <availability :bookable-id="this.$route.params.id"></availability>
     </div>
   </div>
 </template>
 
 <script>
 import Availability from "./Availability";
+import ReviewList from "./ReviewList";
 
 export default {
   components: {
     Availability,
+    ReviewList,
   },
+
   data() {
     return {
       bookable: null,
