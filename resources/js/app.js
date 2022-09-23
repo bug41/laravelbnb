@@ -1,7 +1,7 @@
 require('./bootstrap');
 
-import VueRouter from "vue-router";
 import router from "./routes";
+import VueRouter from "vue-router";
 import Index from "./Index";
 import moment from "moment";
 import StarRating from "./shared/components/StarRating.vue";
