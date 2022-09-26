@@ -2281,6 +2281,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 //
 //
 //
@@ -2296,14 +2298,53 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       review: {
         rating: 5,
         content: null
-      }
+      },
+      existingReview: null,
+      loading: false
     };
+  },
+  created: function created() {
+    var _this = this;
+
+    this.loading = true; // 1. If review already exists (in reviews table by id)
+
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/reviews/".concat(this.$route.params.id)).then(function (response) {
+      return _this.existingReview = response.data.data;
+    })["catch"](function (err) {//
+    }).then(function () {
+      return _this.loading = false;
+    }); // 2. Fetch a booking by a review key
+    // 3. Store the review
+  },
+  computed: {
+    alreadyReviewed: function alreadyReviewed() {
+      return this.existingReview !== null;
+    }
   }
 });
 
@@ -2328,22 +2369,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    rating: Number
+    value: Number
   },
   computed: {
     halfStar: function halfStar() {
-      var fraction = Math.round((this.rating - Math.floor(this.rating)) * 100);
+      var fraction = Math.round((this.value - Math.floor(this.value)) * 100);
       console.log(fraction);
       return fraction > 0 && fraction < 50;
     },
     fullStars: function fullStars() {
       // > 4.5  = 5 stars
       // 4.3 = 4 and half
-      return Math.round(this.rating);
+      return Math.round(this.value);
     },
     emptyStars: function emptyStars() {
-      // if rating would be 1.9, ceil(1.9) = 2 , 5 - 2 = 3 , render 3 empty stars
-      return 5 - Math.ceil(this.rating);
+      // if value would be 1.9, ceil(1.9) = 2 , 5 - 2 = 3 , render 3 empty stars
+      return 5 - Math.ceil(this.value);
     }
   },
   created: function created() {
@@ -60442,7 +60483,7 @@ var render = function() {
                     [
                       _c("star-rating", {
                         staticClass: "fa-lg",
-                        attrs: { rating: review.rating }
+                        attrs: { value: review.rating }
                       })
                     ],
                     1
@@ -60593,51 +60634,92 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c(
-      "div",
-      { staticClass: "form-group" },
-      [
-        _c("label", { staticClass: "text-muted", attrs: { for: "" } }, [
-          _vm._v("Select the star rating (1 is worst - 5 is best)")
-        ]),
-        _vm._v(" "),
-        _c("star-rating", {
-          staticClass: "fa-3x",
-          attrs: { rating: _vm.review.rating },
-          on: {
-            "rating:changed": function($event) {
-              _vm.review.rating = $event
-            }
-          }
-        })
-      ],
-      1
-    ),
-    _vm._v(" "),
-    _vm._m(0),
-    _vm._v(" "),
-    _c("button", { staticClass: "btn btn-lg btn-primary btn-block" }, [
-      _vm._v("Submit")
-    ])
+    _vm.loading
+      ? _c("div", [_vm._v("Loading...")])
+      : _c("div", [
+          _vm.alreadyReviewed
+            ? _c("div", [
+                _c("h3", [
+                  _vm._v("You've already left a review for this booking!")
+                ])
+              ])
+            : _c("div", [
+                _c(
+                  "div",
+                  { staticClass: "form-group" },
+                  [
+                    _c(
+                      "label",
+                      { staticClass: "text-muted", attrs: { for: "" } },
+                      [
+                        _vm._v(
+                          "Select the star rating (1 is worst - 5 is best)"
+                        )
+                      ]
+                    ),
+                    _vm._v(
+                      "\n                " +
+                        _vm._s(/* 
+                    :rating="review.rating"
+                    @rating:changed="review.rating= $event"
+                    위에꺼 없애고 v-model 만 ?
+                    */) +
+                        "\n                "
+                    ),
+                    _c("star-rating", {
+                      staticClass: "fa-3x",
+                      model: {
+                        value: _vm.review.rating,
+                        callback: function($$v) {
+                          _vm.$set(_vm.review, "rating", $$v)
+                        },
+                        expression: "review.rating"
+                      }
+                    })
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c(
+                    "label",
+                    { staticClass: "text-muted", attrs: { for: "content" } },
+                    [_vm._v("Describe your expirience with")]
+                  ),
+                  _vm._v(" "),
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.review.content,
+                        expression: "review.content"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { name: "content", cols: "30", rows: "10" },
+                    domProps: { value: _vm.review.content },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.review, "content", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  { staticClass: "btn btn-lg btn-primary btn-block" },
+                  [_vm._v("Submit")]
+                )
+              ])
+        ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group" }, [
-      _c("label", { staticClass: "text-muted", attrs: { for: "content" } }, [
-        _vm._v("Describe your expirience with")
-      ]),
-      _vm._v(" "),
-      _c("textarea", {
-        staticClass: "form-control",
-        attrs: { name: "content", cols: "30", rows: "10" }
-      })
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -60669,7 +60751,7 @@ var render = function() {
           staticClass: "fas fa-star",
           on: {
             click: function($event) {
-              return _vm.$emit("rating:changed", star)
+              return _vm.$emit("input", star)
             }
           }
         })
@@ -60685,7 +60767,7 @@ var render = function() {
           staticClass: "far fa-star",
           on: {
             click: function($event) {
-              return _vm.$emit("rating:changed", _vm.fullStars + star)
+              return _vm.$emit("input", _vm.fullStars + star)
             }
           }
         })
