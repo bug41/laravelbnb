@@ -2335,7 +2335,8 @@ __webpack_require__.r(__webpack_exports__);
 
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/reviews/".concat(this.$route.params.id)).then(function (response) {
       return _this.existingReview = response.data.data;
-    })["catch"](function (err) {//
+    })["catch"](function (err) {
+      if (err.response) {}
     }).then(function () {
       return _this.loading = false;
     }); // 2. Fetch a booking by a review key

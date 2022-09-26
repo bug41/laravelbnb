@@ -52,7 +52,9 @@ import Axios from 'axios';
             .get(`/api/reviews/${this.$route.params.id}`)
             .then(response => (this.existingReview = response.data.data))
             .catch(err => {
-                //
+                if(err.response){
+                    
+                }
             })
             .then(() => (this.loading = false));
             
