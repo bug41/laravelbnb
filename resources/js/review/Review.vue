@@ -54,7 +54,7 @@
 
 <script>
 import Axios from 'axios';
-import {is404} from './../shared/utils/response';
+import {is404, is422} from './../shared/utils/response';
 import FatalError from '../shared/components/FatalError.vue';
 
     export default {

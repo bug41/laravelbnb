@@ -77028,14 +77028,22 @@ __webpack_require__.r(__webpack_exports__);
 /*!***********************************************!*\
   !*** ./resources/js/shared/utils/response.js ***!
   \***********************************************/
-/*! exports provided: is404 */
+/*! exports provided: is404, is422 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "is404", function() { return is404; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "is422", function() { return is422; });
 var is404 = function is404(err) {
-  return err.response && err.response.status && 404 == err.response.status;
+  return isErrorWithResponseAndStatus(err) && 404 == err.response.status;
+};
+var is422 = function is422(err) {
+  return isErrorWithResponseAndStatus(err) && 422 == err.response.status;
+};
+
+var isErrorWithResponseAndStatus = function isErrorWithResponseAndStatus(err) {
+  return err.response && err.response.status;
 };
 
 /***/ }),
