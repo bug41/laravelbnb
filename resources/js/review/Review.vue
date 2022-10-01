@@ -45,7 +45,7 @@
                                 v-model="review.content"></textarea>
                         </div>
 
-                        <button class="btn btn-lg btn-primary btn-block">Submit</button>
+                        <button class="btn btn-lg btn-primary btn-block" @click.prevent="submit" :disabled="loading">Submit</button>
                     </div>   
                 </div>
                     
@@ -62,6 +62,7 @@ import {is404} from './../shared/utils/response';
         data(){
             return{
                 review: {
+                    id: null,
                     rating:5,
                     content: null
                 },
@@ -72,10 +73,11 @@ import {is404} from './../shared/utils/response';
             }
         },
         created(){
+            this.review.id = this.$route.params.id;
             this.loading = true;
             // 1. If review already exists (in reviews table by id)
             Axios
-            .get(`/api/reviews/${this.$route.params.id}`)
+            .get(`/api/reviews/${this.review.id}`)
             .then(response => {
                 this.existingReview = response.data.data
             })
@@ -83,7 +85,7 @@ import {is404} from './../shared/utils/response';
                 if(is404(err)){
 
                     // 2. Fetch a booking by a review key
-                    return Axios.get(`/api/booking-by-review/${this.$route.params.id}`)
+                    return Axios.get(`/api/booking-by-review/${this.review.id}`)
                     .then(response => {
                         this.booking = response.data.data;
                     })
@@ -123,6 +125,16 @@ import {is404} from './../shared/utils/response';
             },
             towColumn(){
                 return this.loading || !this.alreadyReviewed
+            }
+        },
+        methods: {
+            submit() {
+                this.loading = true;
+                Axios
+                .post(`/api/reviews`, this.review).
+                then(response => console.log(response))
+                .catch((err) =>this.error = true)
+                .then(()=>(this.loading=false));
             }
         }
        
