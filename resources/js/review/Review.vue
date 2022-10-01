@@ -68,7 +68,8 @@ import FatalError from '../shared/components/FatalError.vue';
             existingReview: null,
             loading: false,
             booking: null,
-            error: false
+            error: false,
+            errors:null
         };
     },
     created() {
@@ -122,11 +123,22 @@ import FatalError from '../shared/components/FatalError.vue';
     },
     methods: {
         submit() {
+            this.errors = null;
             this.loading = true;
             Axios
                 .post(`/api/reviews`, this.review).
                 then(response => console.log(response))
-                .catch((err) => this.error = true)
+                .catch((err) => {
+                    if(is422(err)){
+                        const errors = err.response.data.errors;
+                        
+                        if(erros["content"] && 1 == _.size(errors)){
+                            this.errors = errors;
+                            return;
+                        }
+                    }
+                    this.error = true;
+                })
                 .then(() => (this.loading = false));
         }
     },
