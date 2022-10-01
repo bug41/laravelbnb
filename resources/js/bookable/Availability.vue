@@ -78,54 +78,56 @@ label {
 
 
 <script>
-export default {
-  props: {
-    bookableId: String,
-  },
-  data() {
-    return {
-      from: null,
-      to: null,
-      loading: false,
-      status: null,
-      errors: null,
-    };
-  },
-  methods: {
-    check() {
-      this.loading = true;
-      this.errors = null;
+  import {is422} from './../shared/utils/response';
 
-      axios
-        .get(
-          `/api/bookables/${this.bookableId}/availability?from=${this.from}&to=${this.to}`
-        )
-        .then((response) => {
-          this.status = response.status;
-        })
-        .catch((error) => {
-          if (422 == error.response.status) {
-            this.errors = error.response.data.errors;
-          }
+  export default {
+    props: {
+      bookableId: String,
+    },
+    data() {
+      return {
+        from: null,
+        to: null,
+        loading: false,
+        status: null,
+        errors: null,
+      };
+    },
+    methods: {
+      check() {
+        this.loading = true;
+        this.errors = null;
 
-          this.status = error.response.status;
-        })
-        .then(() => (this.loading = false));
+        axios
+          .get(
+            `/api/bookables/${this.bookableId}/availability?from=${this.from}&to=${this.to}`
+          )
+          .then((response) => {
+            this.status = response.status;
+          })
+          .catch((error) => {
+            if (is422(error)) {
+              this.errors = error.response.data.errors;
+            }
+
+            this.status = error.response.status;
+          })
+          .then(() => (this.loading = false));
+      },
+      errorFor(field) {
+        return this.hasErrors && this.errors[field] ? this.errors[field] : null;
+      },
     },
-    errorFor(field) {
-      return this.hasErrors && this.errors[field] ? this.errors[field] : null;
+    computed: {
+      hasErrors() {
+        return 422 == this.status && this.erros !== null;
+      },
+      hasAvailability() {
+        return 200 == this.status;
+      },
+      noAvailability() {
+        return 404 == this.status;
+      },
     },
-  },
-  computed: {
-    hasErrors() {
-      return 422 == this.status && this.erros !== null;
-    },
-    hasAvailability() {
-      return 200 == this.status;
-    },
-    noAvailability() {
-      return 404 == this.status;
-    },
-  },
-};
+  };
 </script>
