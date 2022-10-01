@@ -35,10 +35,10 @@ export default {
     const numbers = [0.9, 4.0, 4.4, 4.5, 4.6, 4.9];
 
     numbers.forEach((n) => {
-      console.log(`round for ${n} ${Math.round(n)}`);
-      console.log(`floor for ${n} ${Math.floor(n)}`);
-      console.log(`ceil for ${n} ${Math.ceil(n)}`);
-      console.log("=================================");
+      //console.log(`round for ${n} ${Math.round(n)}`);
+      //console.log(`floor for ${n} ${Math.floor(n)}`);
+      //console.log(`ceil for ${n} ${Math.ceil(n)}`);
+      //console.log("=================================");
     });
   },
 };
