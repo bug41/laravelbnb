@@ -1,8 +1,6 @@
 <template>
     <div>
-        <div class="row" v-if="error">
-            Unknown error has occured, plz try again later!
-        </div>
+        <fatal-error v-if="error"></fatal-error>
         <div class="row" v-else>
             <div :class="[{'col-md-4': towColumn},{'d-none':oneColumn}]">
                 <div class="card">
@@ -57,86 +55,81 @@
 <script>
 import Axios from 'axios';
 import {is404} from './../shared/utils/response';
+import FatalError from '../shared/components/FatalError.vue';
 
     export default {
-        data(){
-            return{
-                review: {
-                    id: null,
-                    rating:5,
-                    content: null
-                },
-                existingReview: null,
-                loading:false,
-                booking : null,
-                error:false
-            }
-        },
-        created(){
-            this.review.id = this.$route.params.id;
-            this.loading = true;
-            // 1. If review already exists (in reviews table by id)
-            Axios
+    data() {
+        return {
+            review: {
+                id: null,
+                rating: 5,
+                content: null
+            },
+            existingReview: null,
+            loading: false,
+            booking: null,
+            error: false
+        };
+    },
+    created() {
+        this.review.id = this.$route.params.id;
+        this.loading = true;
+        // 1. If review already exists (in reviews table by id)
+        Axios
             .get(`/api/reviews/${this.review.id}`)
             .then(response => {
-                this.existingReview = response.data.data
-            })
+            this.existingReview = response.data.data;
+        })
             .catch(err => {
-                if(is404(err)){
-
-                    // 2. Fetch a booking by a review key
-                    return Axios.get(`/api/booking-by-review/${this.review.id}`)
+            if (is404(err)) {
+                // 2. Fetch a booking by a review key
+                return Axios.get(`/api/booking-by-review/${this.review.id}`)
                     .then(response => {
-                        this.booking = response.data.data;
-                    })
-                    .catch(err=> {
-                        // is404(err) ? {} : (this.error =true);
-                        this.error = !is404(err);
-
-                        //if(!is404(err)){
-                        //    this.error=true;
-                        //}
-                    })
-                }
-
-                this.error = true;
-            })
-            .then(response => {
-                //console.log(this.booking.booking_id);                
-                this.loading = false
-            });
-            
-            
-            // 3. Store the review
-        },
-        computed:{
-            alreadyReviewed(){                
-                return this.hasReview || !this.booking;
-            },
-            hasReview(){
-                return this.existingReview !== null;
-            },
-            hasBooking() {
-                return this.booking !== null;
-            },
-
-            oneColumn(){
-                return !this.loading && this.alreadyReviewed;
-            },
-            towColumn(){
-                return this.loading || !this.alreadyReviewed
+                    this.booking = response.data.data;
+                })
+                    .catch(err => {
+                    // is404(err) ? {} : (this.error =true);
+                    this.error = !is404(err);
+                    //if(!is404(err)){
+                    //    this.error=true;
+                    //}
+                });
             }
+            this.error = true;
+        })
+            .then(response => {
+            //console.log(this.booking.booking_id);                
+            this.loading = false;
+        });
+        // 3. Store the review
+    },
+    computed: {
+        alreadyReviewed() {
+            return this.hasReview || !this.booking;
         },
-        methods: {
-            submit() {
-                this.loading = true;
-                Axios
+        hasReview() {
+            return this.existingReview !== null;
+        },
+        hasBooking() {
+            return this.booking !== null;
+        },
+        oneColumn() {
+            return !this.loading && this.alreadyReviewed;
+        },
+        towColumn() {
+            return this.loading || !this.alreadyReviewed;
+        }
+    },
+    methods: {
+        submit() {
+            this.loading = true;
+            Axios
                 .post(`/api/reviews`, this.review).
                 then(response => console.log(response))
-                .catch((err) =>this.error = true)
-                .then(()=>(this.loading=false));
-            }
+                .catch((err) => this.error = true)
+                .then(() => (this.loading = false));
         }
-       
-    }
+    },
+    components: { FatalError }
+}
 </script>
