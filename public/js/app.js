@@ -1908,6 +1908,7 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _shared_utils_response__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../shared/utils/response */ "./resources/js/shared/utils/response.js");
 //
 //
 //
@@ -1987,6 +1988,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     bookableId: String
@@ -2009,7 +2011,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.get("/api/bookables/".concat(this.bookableId, "/availability?from=").concat(this.from, "&to=").concat(this.to)).then(function (response) {
         _this.status = response.status;
       })["catch"](function (error) {
-        if (422 == error.response.status) {
+        if (Object(_shared_utils_response__WEBPACK_IMPORTED_MODULE_0__["is422"])(error)) {
           _this.errors = error.response.data.errors;
         }
 
@@ -2339,6 +2341,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2353,7 +2368,8 @@ __webpack_require__.r(__webpack_exports__);
       existingReview: null,
       loading: false,
       booking: null,
-      error: false
+      error: false,
+      errors: null
     };
   },
   created: function created() {
@@ -2404,14 +2420,27 @@ __webpack_require__.r(__webpack_exports__);
     submit: function submit() {
       var _this2 = this;
 
+      this.errors = null;
       this.loading = true;
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.post("/api/reviews", this.review).then(function (response) {
         return console.log(response);
       })["catch"](function (err) {
-        return _this2.error = true;
+        if (Object(_shared_utils_response__WEBPACK_IMPORTED_MODULE_1__["is422"])(err)) {
+          var errors = err.response.data.errors;
+
+          if (errors["content"] && 1 == _.size(errors)) {
+            _this2.errors = errors;
+            return;
+          }
+        }
+
+        _this2.error = true;
       }).then(function () {
         return _this2.loading = false;
       });
+    },
+    errorFor: function errorFor(field) {
+      return null !== this.errors && this.errors[field] ? this.errors[field] : null;
     }
   },
   components: {
@@ -60873,46 +60902,73 @@ var render = function() {
                               1
                             ),
                             _vm._v(" "),
-                            _c("div", { staticClass: "form-group" }, [
-                              _c(
-                                "label",
-                                {
-                                  staticClass: "text-muted",
-                                  attrs: { for: "content" }
-                                },
-                                [_vm._v("Describe your expirience with")]
-                              ),
-                              _vm._v(" "),
-                              _c("textarea", {
-                                directives: [
+                            _c(
+                              "div",
+                              { staticClass: "form-group" },
+                              [
+                                _c(
+                                  "label",
                                   {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.review.content,
-                                    expression: "review.content"
-                                  }
-                                ],
-                                staticClass: "form-control",
-                                attrs: {
-                                  name: "content",
-                                  cols: "30",
-                                  rows: "10"
-                                },
-                                domProps: { value: _vm.review.content },
-                                on: {
-                                  input: function($event) {
-                                    if ($event.target.composing) {
-                                      return
+                                    staticClass: "text-muted",
+                                    attrs: { for: "content" }
+                                  },
+                                  [_vm._v("Describe your expirience with")]
+                                ),
+                                _vm._v(" "),
+                                _c("textarea", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.review.content,
+                                      expression: "review.content"
                                     }
-                                    _vm.$set(
-                                      _vm.review,
-                                      "content",
-                                      $event.target.value
-                                    )
+                                  ],
+                                  staticClass: "form-control",
+                                  class: [
+                                    { "is-invalid": _vm.errorFor("content") }
+                                  ],
+                                  attrs: {
+                                    name: "content",
+                                    cols: "30",
+                                    rows: "10"
+                                  },
+                                  domProps: { value: _vm.review.content },
+                                  on: {
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.$set(
+                                        _vm.review,
+                                        "content",
+                                        $event.target.value
+                                      )
+                                    }
                                   }
-                                }
-                              })
-                            ]),
+                                }),
+                                _vm._v(" "),
+                                _vm._l(_vm.errorFor("content"), function(
+                                  error,
+                                  index
+                                ) {
+                                  return _c(
+                                    "div",
+                                    {
+                                      key: "content" + index,
+                                      staticClass: "invalid-feedback"
+                                    },
+                                    [
+                                      _vm._v(
+                                        _vm._s(error) +
+                                          "\n                        "
+                                      )
+                                    ]
+                                  )
+                                })
+                              ],
+                              2
+                            ),
                             _vm._v(" "),
                             _c(
                               "button",

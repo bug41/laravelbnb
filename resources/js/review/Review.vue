@@ -39,8 +39,21 @@
                         </div>
                         <div class="form-group">
                             <label for="content" class="text-muted">Describe your expirience with</label>
-                            <textarea name="content" cols="30" rows="10" class="form-control"
-                                v-model="review.content"></textarea>
+                            <textarea 
+                             name="content" 
+                             cols="30" 
+                             rows="10"
+                             class="form-control" 
+                             v-model="review.content"
+                             :class="[{'is-invalid':errorFor('content')}]"                             
+                             ></textarea>
+
+                            <div
+                             class="invalid-feedback" v-for="(error, index) in errorFor('content')"
+                             :key="'content' + index"
+                            >{{ error }}
+                            </div>
+
                         </div>
 
                         <button class="btn btn-lg btn-primary btn-block" @click.prevent="submit" :disabled="loading">Submit</button>
@@ -132,7 +145,7 @@ import FatalError from '../shared/components/FatalError.vue';
                     if(is422(err)){
                         const errors = err.response.data.errors;
                         
-                        if(erros["content"] && 1 == _.size(errors)){
+                        if(errors["content"] && 1 == _.size(errors)){
                             this.errors = errors;
                             return;
                         }
@@ -140,7 +153,10 @@ import FatalError from '../shared/components/FatalError.vue';
                     this.error = true;
                 })
                 .then(() => (this.loading = false));
-        }
+        },
+        errorFor(field) {
+        return null !== this.errors && this.errors[field] ? this.errors[field] : null;
+      }
     },
     components: { FatalError }
 }
