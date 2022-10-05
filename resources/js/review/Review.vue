@@ -40,23 +40,20 @@
                         <div class="form-group">
                             <label for="content" class="text-muted">Describe your expirience with</label>
                             <textarea 
-                             name="content" 
-                             cols="30" 
-                             rows="10"
-                             class="form-control" 
-                             v-model="review.content"
-                             :class="[{'is-invalid':errorFor('content')}]"                             
+                                name="content" 
+                                cols="30" 
+                                rows="10"
+                                class="form-control" 
+                                v-model="review.content"
+                                :class="[{'is-invalid':errorFor('content')}]"                             
                              ></textarea>
-
-                            <div
-                             class="invalid-feedback" v-for="(error, index) in errorFor('content')"
-                             :key="'content' + index"
-                            >{{ error }}
-                            </div>
-
+                            <v-errors :errors="errorFor('content')"></v-errors>
                         </div>
 
-                        <button class="btn btn-lg btn-primary btn-block" @click.prevent="submit" :disabled="loading">Submit</button>
+                        <button
+                            class="btn btn-lg btn-primary btn-block"
+                            @click.prevent="submit" 
+                            :disabled="sending">Submit</button>
                     </div>   
                 </div>
                     
@@ -82,7 +79,8 @@ import FatalError from '../shared/components/FatalError.vue';
             loading: false,
             booking: null,
             error: false,
-            errors:null
+            errors:null,
+            sending: false
         };
     },
     created() {
@@ -137,7 +135,8 @@ import FatalError from '../shared/components/FatalError.vue';
     methods: {
         submit() {
             this.errors = null;
-            this.loading = true;
+            this.sending = true;
+
             Axios
                 .post(`/api/reviews`, this.review).
                 then(response => console.log(response))
@@ -152,7 +151,7 @@ import FatalError from '../shared/components/FatalError.vue';
                     }
                     this.error = true;
                 })
-                .then(() => (this.loading = false));
+                .then(() => (this.sending = false));
         },
         errorFor(field) {
         return null !== this.errors && this.errors[field] ? this.errors[field] : null;
@@ -161,3 +160,9 @@ import FatalError from '../shared/components/FatalError.vue';
     components: { FatalError }
 }
 </script>
+
+<style scoped>
+    .form-control.is-invalid ~ div > .invalid-feedback {
+        display:block;
+    }
+</style>
