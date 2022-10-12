@@ -102,8 +102,7 @@ export default {
                             this.booking = response.data.data;
                         }).catch(err => {                                  
                             // is404(err) ? {} : (this.error =true);
-                            this.error = !is404(err);
-                            console.log('아이 시발2');
+                            this.error = !is404(err);                            
                             //if(!is404(err)){
                             //    this.error=true;
                             //}
@@ -111,8 +110,7 @@ export default {
                 }
                 this.error = true;
             }).then(response => {                
-                //console.log(this.booking.booking_id);       
-                console.log('아이 시발3');
+                //console.log(this.booking.booking_id);                       
                 this.loading = false;
             });
         // 3. Store the review

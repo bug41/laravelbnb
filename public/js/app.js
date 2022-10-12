@@ -2374,8 +2374,7 @@ __webpack_require__.r(__webpack_exports__);
           _this.booking = response.data.data;
         })["catch"](function (err) {
           // is404(err) ? {} : (this.error =true);
-          _this.error = !Object(_shared_utils_response__WEBPACK_IMPORTED_MODULE_1__["is404"])(err);
-          console.log('아이 시발2'); //if(!is404(err)){
+          _this.error = !Object(_shared_utils_response__WEBPACK_IMPORTED_MODULE_1__["is404"])(err); //if(!is404(err)){
           //    this.error=true;
           //}
         });
@@ -2383,8 +2382,7 @@ __webpack_require__.r(__webpack_exports__);
 
       _this.error = true;
     }).then(function (response) {
-      //console.log(this.booking.booking_id);       
-      console.log('아이 시발3');
+      //console.log(this.booking.booking_id);                       
       _this.loading = false;
     }); // 3. Store the review
   },
