@@ -65,9 +65,10 @@
 <script>
 import Axios from 'axios';
 import {is404, is422} from './../shared/utils/response';
-import FatalError from '../shared/components/FatalError.vue';
+import validationErrors from './../shared/mixins/validationErrors';
 
-    export default {
+export default {
+    mixins: [validationErrors],
     data() {
         return {
             review: {
@@ -79,7 +80,7 @@ import FatalError from '../shared/components/FatalError.vue';
             loading: false,
             booking: null,
             error: false,
-            errors:null,
+            errors: false,
             sending: false
         };
     },
@@ -90,29 +91,30 @@ import FatalError from '../shared/components/FatalError.vue';
         Axios
             .get(`/api/reviews/${this.review.id}`)
             .then(response => {
-            this.existingReview = response.data.data;
-        })
-            .catch(err => {
-            if (is404(err)) {
-                // 2. Fetch a booking by a review key
-                return Axios.get(`/api/booking-by-review/${this.review.id}`)
-                    .then(response => {
-                    this.booking = response.data.data;
-                })
-                    .catch(err => {
-                    // is404(err) ? {} : (this.error =true);
-                    this.error = !is404(err);
-                    //if(!is404(err)){
-                    //    this.error=true;
-                    //}
-                });
-            }
-            this.error = true;
-        })
-            .then(response => {
-            //console.log(this.booking.booking_id);                
-            this.loading = false;
-        });
+                this.existingReview = response.data.data;
+            }).catch(err => {
+                //console.log(err);
+                if (is404(err)) {                    
+                    // 2. Fetch a booking by a review key
+                    return Axios
+                        .get(`/api/booking-by-review/${this.review.id}`)
+                        .then(response => {                            
+                            this.booking = response.data.data;
+                        }).catch(err => {                                  
+                            // is404(err) ? {} : (this.error =true);
+                            this.error = !is404(err);
+                            console.log('아이 시발2');
+                            //if(!is404(err)){
+                            //    this.error=true;
+                            //}
+                        });
+                }
+                this.error = true;
+            }).then(response => {                
+                //console.log(this.booking.booking_id);       
+                console.log('아이 시발3');
+                this.loading = false;
+            });
         // 3. Store the review
     },
     computed: {
@@ -134,6 +136,7 @@ import FatalError from '../shared/components/FatalError.vue';
     },
     methods: {
         submit() {
+            //3. Store the review            
             this.errors = null;
             this.sending = true;
 
@@ -142,27 +145,21 @@ import FatalError from '../shared/components/FatalError.vue';
                 then(response => console.log(response))
                 .catch((err) => {
                     if(is422(err)){
-                        const errors = err.response.data.errors;
-                        
+                        const errors = err.response.data.errors;                        
+
                         if(errors["content"] && 1 == _.size(errors)){
                             this.errors = errors;
                             return;
                         }
                     }
+                    
                     this.error = true;
                 })
-                .then(() => (this.sending = false));
-        },
-        errorFor(field) {
-        return null !== this.errors && this.errors[field] ? this.errors[field] : null;
-      }
-    },
-    components: { FatalError }
+                .then(() => {                    
+                    this.sending = false
+                }
+                );
+        }
+    }
 }
 </script>
-
-<style scoped>
-    .form-control.is-invalid ~ div > .invalid-feedback {
-        display:block;
-    }
-</style>
