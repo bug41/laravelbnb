@@ -79,7 +79,8 @@ label {
         from: null,
         to: null,
         loading: false,
-        status: null,        
+        status: null
+        
       };
     },
     methods: {

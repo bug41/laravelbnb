@@ -80,7 +80,7 @@ export default {
             loading: false,
             booking: null,
             error: false,
-            errors: false,
+            //errors: false,
             sending: false
         };
     },

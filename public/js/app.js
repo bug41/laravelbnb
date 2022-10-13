@@ -2354,7 +2354,7 @@ __webpack_require__.r(__webpack_exports__);
       loading: false,
       booking: null,
       error: false,
-      errors: false,
+      //errors: false,
       sending: false
     };
   },
@@ -77251,7 +77251,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     errorFor: function errorFor(field) {
-      return null !== this.hasErrors && this.errors[field] ? this.errors[field] : null;
+      return null !== this.errors && this.errors[field] ? this.errors[field] : null;
     }
   }
 });
