@@ -84,35 +84,52 @@ export default {
             sending: false
         };
     },
-    created() {
+    async created() {
         this.review.id = this.$route.params.id;
         this.loading = true;
         // 1. If review already exists (in reviews table by id)
-        Axios
-            .get(`/api/reviews/${this.review.id}`)
-            .then(response => {
-                this.existingReview = response.data.data;
-            }).catch(err => {
-                //console.log(err);
-                if (is404(err)) {                    
-                    // 2. Fetch a booking by a review key
-                    return Axios
-                        .get(`/api/booking-by-review/${this.review.id}`)
-                        .then(response => {                            
-                            this.booking = response.data.data;
-                        }).catch(err => {                                  
-                            // is404(err) ? {} : (this.error =true);
-                            this.error = !is404(err);                            
-                            //if(!is404(err)){
-                            //    this.error=true;
-                            //}
-                        });
+
+        try{
+            this.existingReview = (await axios.get(`/api/reviews/${this.review.id}`)).data.data;
+        }catch(err){
+            if (is404(err)) {                
+                try{
+                    this.booking = (await axios.get(`/api/booking-by-review/${this.review.id}`)).data.data;
+                }catch(err){
+                    this.error = !is404(err);
                 }
+            }else{
                 this.error = true;
-            }).then(response => {                
-                //console.log(this.booking.booking_id);                       
-                this.loading = false;
-            });
+            }            
+        }
+        
+        this.loading = false;
+
+        // axios
+        //     .get(`/api/reviews/${this.review.id}`)
+        //     .then(response => {
+        //         this.existingReview = response.data.data;
+        //     }).catch(err => {
+        //         //console.log(err);
+        //         if (is404(err)) {                    
+        //             // 2. Fetch a booking by a review key
+        //             return Axios
+        //                 .get(`/api/booking-by-review/${this.review.id}`)
+        //                 .then(response => {                            
+        //                     this.booking = response.data.data;
+        //                 }).catch(err => {                                  
+        //                     // is404(err) ? {} : (this.error =true);
+        //                     this.error = !is404(err);                            
+        //                     //if(!is404(err)){
+        //                     //    this.error=true;
+        //                     //}
+        //                 });
+        //         }
+        //         this.error = true;
+        //     }).then(response => {                
+        //         //console.log(this.booking.booking_id);                       
+        //         this.loading = false;
+        //     });
         // 3. Store the review
     },
     computed: {
