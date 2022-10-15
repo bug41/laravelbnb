@@ -17,7 +17,7 @@ export default {
         (this.value - Math.floor(this.value)) * 100
       );
 
-      console.log(fraction);
+      //console.log(fraction);
 
       return fraction > 0 && fraction < 50;
     },

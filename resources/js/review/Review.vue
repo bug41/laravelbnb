@@ -1,7 +1,10 @@
 <template>
     <div>
+        <success v-if="success">
+            You've left a review, thank you very much!
+        </success>
         <fatal-error v-if="error"></fatal-error>
-        <div class="row" v-else>
+        <div class="row" v-if="!success && !error">
             <div :class="[{'col-md-4': towColumn},{'d-none':oneColumn}]">
                 <div class="card">
                     <div class="card-body">
@@ -67,7 +70,7 @@ import Axios from 'axios';
 import {is404, is422} from './../shared/utils/response';
 import validationErrors from './../shared/mixins/validationErrors';
 
-export default {
+export default {    
     mixins: [validationErrors],
     data() {
         return {
@@ -81,7 +84,8 @@ export default {
             booking: null,
             error: false,
             //errors: false,
-            sending: false
+            sending: false,
+            success : false,
         };
     },
     async created() {
@@ -154,10 +158,14 @@ export default {
             //3. Store the review            
             this.errors = null;
             this.sending = true;
+            this.success = false;
 
-            Axios
+            axios
                 .post(`/api/reviews`, this.review).
-                then(response => console.log(response))
+                then(response => {
+                    this.success = 201 == response.status;
+
+                })
                 .catch((err) => {
                     if(is422(err)){
                         const errors = err.response.data.errors;                        
