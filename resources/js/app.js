@@ -9,6 +9,7 @@ import StarRating from "./shared/components/StarRating.vue";
 import FatalError from "./shared/components/FatalError.vue";
 import Success from "./shared/components/Success.vue";
 import ValidationErrors from "./shared/components/ValidationErrors.vue";
+import storeDefinition from "./store";
 import Vue from "vue";
 
 window.Vue = require('vue');
@@ -26,17 +27,9 @@ Vue.component("fatal-error", FatalError);
 Vue.component("success", Success);
 Vue.component("v-errors", ValidationErrors);
 
+const store = new Vuex.Store(storeDefinition);
 
-const store = new Vuex.Store({
-    state : {
-        count: 0
-    },
-    mutations: {
-        increment(state){
-            state.count++
-        }
-    }
-});
+
 
 const app = new Vue({
     el: '#app',
