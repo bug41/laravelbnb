@@ -9,6 +9,7 @@ import StarRating from "./shared/components/StarRating.vue";
 import FatalError from "./shared/components/FatalError.vue";
 import Success from "./shared/components/Success.vue";
 import ValidationErrors from "./shared/components/ValidationErrors.vue";
+import ProcessButton from "./shared/components/ProcessButton.vue";
 import storeDefinition from "./store";
 import Vue from "vue";
 
@@ -26,6 +27,7 @@ Vue.component("star-rating", StarRating);
 Vue.component("fatal-error", FatalError);
 Vue.component("success", Success);
 Vue.component("v-errors", ValidationErrors);
+Vue.component("processButton", ProcessButton);
 
 const store = new Vuex.Store(storeDefinition);
 
