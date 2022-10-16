@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Bookable extends Model
 {
@@ -18,7 +19,10 @@ class Bookable extends Model
         return $this->hasOne(Review::class);
     }
     public function availableFor($from, $to): bool
-    {
-        return 0 == $this->bookings()->betweenDates($from, $to)->count();
+    {        
+        //DB::enableQueryLog();
+        $result = $this->bookings()->betweenDates($from, $to)->count();
+        //dd(DB::getQueryLog());
+        return 0 ==  $result;
     }
 }
