@@ -88,7 +88,7 @@ label {
         this.loading = true;
         this.errors = null;
 
-        this.$store.commit('setLastSearch',{
+        this.$store.dispatch('setLastSearch',{
           from: this.from,
           to : this.to
         })
@@ -97,10 +97,10 @@ label {
           .get(
             `/api/bookables/${this.bookableId}/availability?from=${this.from}&to=${this.to}`
           )
-          .then((response) => {
+          .then((response) => {            
             this.status = response.status;
           })
-          .catch((error) => {
+          .catch((error) => {            
             if (is422(error)) {
               this.errors = error.response.data.errors;
             }
