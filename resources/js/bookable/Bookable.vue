@@ -15,7 +15,7 @@
       <review-list :bookable-id="this.$route.params.id"></review-list>
     </div>
     <div class="col-md-4 pb-4">
-      <availability :bookable-id="this.$route.params.id"></availability>
+      <availability :bookable-id="this.$route.params.id" @availability="checkPrice($event)"></availability>
     </div>
   </div>
 </template>
@@ -34,6 +34,7 @@ export default {
     return {
       bookable: null,
       loading: false,
+      price:null
     };
   },
   created() {
@@ -43,5 +44,14 @@ export default {
       this.loading = false;
     });
   },
+  methods:{
+    checkPrice(hasAvailability){
+      //console.log(hasAvailability);
+      if(!hasAvailability){
+        this.price = null;
+        return;
+      }
+    }
+  }
 };
 </script>
