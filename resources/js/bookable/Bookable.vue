@@ -15,7 +15,16 @@
       <review-list :bookable-id="this.$route.params.id"></review-list>
     </div>
     <div class="col-md-4 pb-4">
-      <availability :bookable-id="this.$route.params.id" @availability="checkPrice($event)"></availability>
+      <availability :bookable-id="this.$route.params.id" @availability="checkPrice($event)" class="mb-4"></availability>
+      
+      <transition name="fade">
+        <price-breakdown v-if="price" :price="price"></price-breakdown>        
+      </transition>
+      <transition name="fade">        
+        <button class="btn btn-outline-secondary btn-block" v-if="price">Book now</button>
+      </transition>
+
+
     </div>
   </div>
 </template>
@@ -23,11 +32,14 @@
 <script>
 import Availability from "./Availability";
 import ReviewList from "./ReviewList";
+import PriceBreakdown from "./PriceBreakdown";
+import { mapState } from 'vuex';
 
 export default {
   components: {
     Availability,
     ReviewList,
+    PriceBreakdown,
   },
 
   data() {
@@ -44,12 +56,23 @@ export default {
       this.loading = false;
     });
   },
+  computed: mapState({
+    lastSearch : "lastSearch"
+  }),
   methods:{
-    checkPrice(hasAvailability){
+    async checkPrice(hasAvailability){
       //console.log(hasAvailability);
       if(!hasAvailability){
         this.price = null;
         return;
+      }
+
+      try {
+        this.price= (await axios.get(
+          `/api/bookables/${this.bookable.id}/price?from=${this.lastSearch.from}&to=${this.lastSearch.to}`
+        )).data.data;
+      } catch (err) {
+        this.price = null;
       }
     }
   }
