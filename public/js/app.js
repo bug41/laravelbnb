@@ -2265,6 +2265,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     price: Object
@@ -61728,7 +61739,10 @@ var render = function() {
           { attrs: { name: "fade" } },
           [
             _vm.price
-              ? _c("price-breakdown", { attrs: { price: _vm.price } })
+              ? _c("price-breakdown", {
+                  staticClass: "mb-4",
+                  attrs: { price: _vm.price }
+                })
               : _vm._e()
           ],
           1
@@ -61770,17 +61784,45 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "h6",
-      { staticClass: "text-uppercase text-secondary font-weight-bolder" },
-      [_vm._v("price breakdown")]
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "font-weight-bolder" }, [
-      _vm._v("Total $" + _vm._s(_vm.price.total))
-    ])
-  ])
+  return _c(
+    "div",
+    [
+      _c(
+        "h6",
+        { staticClass: "text-uppercase text-secondary font-weight-bolder" },
+        [_vm._v("price breakdown")]
+      ),
+      _vm._v(" "),
+      _vm._l(_vm.price.breakdown, function(days, price) {
+        return _c(
+          "div",
+          {
+            key: price,
+            staticClass:
+              "pt-2 pb-2 border-bottom border-top d-flex justify-content-between"
+          },
+          [
+            _c("span", [_vm._v(_vm._s(days) + " x $" + _vm._s(price))]),
+            _vm._v(" "),
+            _c("span", [_vm._v("$" + _vm._s(days * price))])
+          ]
+        )
+      }),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "pt-2 font-weight-bolder d-flex justify-content-between"
+        },
+        [
+          _c("span", [_vm._v("Total")]),
+          _vm._v(" "),
+          _c("span", [_vm._v("$" + _vm._s(_vm.price.total))])
+        ]
+      )
+    ],
+    2
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
